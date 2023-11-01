@@ -4,9 +4,12 @@ class Api::V1::ContactsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :contact_not_foud
 
   def index
-    #todo listar apenas usuarios do user autenticado
-    @contacts = Contact.where(user_id: @user.id).all
-    render json: @contacts, status: :ok
+    @contacts = Contact.where(user_id: @user.id).page(params[:page])
+    render json: {
+      data: @contacts,
+      per_page: 1,
+      total_record: @contacts.total_count
+    }, status: :ok
   end
 
   def create
